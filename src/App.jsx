@@ -1,13 +1,18 @@
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import NotFound from "./pages/NotFound";
+import Home from "./pages/Home";
+import Auth from "./pages/Auth";
 
 
 function App() {
 
   return (
-    <>
-      <div>
-        <h1 className='text-2xl'>Hello world</h1>
-      </div>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path='/*' element={<Home />} />
+        <Route path='/auth/*' element={<Auth />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 
