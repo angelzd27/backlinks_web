@@ -29,7 +29,6 @@ const Login = () => {
                 password: password,
             };
             const data = await BD_ACTION_POST('login', body)
-            console.log(data)
             if (!data.error) {
                 setJWT(data.token);
                 Swal.fire(

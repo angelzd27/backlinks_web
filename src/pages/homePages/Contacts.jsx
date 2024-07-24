@@ -11,9 +11,8 @@ const Contacts = () => {
   const thead = ["id", "url", "emails", "phones", "company_name", "created_at"]
   const [searchText, setSearchText] = useState("")
 
-  const getWebsites = async () => {
+  const getContacts = async () => {
     const data = await BD_ACTION_GET("get_contacts", null, getJWT())
-    console.log(data)
     setContacts(data.msg)
     setOriginalContacts(data.msg)
   }
@@ -70,7 +69,7 @@ const Contacts = () => {
   }
 
   useEffect(() => {
-    getWebsites()
+    getContacts()
   }, [rerender])
 
   return (

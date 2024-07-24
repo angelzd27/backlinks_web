@@ -40,7 +40,8 @@ export const RegisterForm = ({ setIsOpen, updateTable }) => {
         passwordError: false,
         confirmPassword: '',
         confirmPasswordError: false,
-        profile: '',
+        profile: '2',
+        profileError: false,
     })
 
     const register = async () => {
@@ -48,9 +49,9 @@ export const RegisterForm = ({ setIsOpen, updateTable }) => {
         const isLastNameValid = validateName(form.lastName)
         const isGenderValid = !!form.gender
         const isEmailValid = validateEmail(form.email)
-        const isProfileValid = !!form.profile
         const isPasswordValid = validatePassword(form.password)
         const isConfirmPasswordValid = form.password === form.confirmPassword
+        const isProfileValid = !!form.profile
 
         const updatedForm = {
             ...form,
@@ -60,49 +61,50 @@ export const RegisterForm = ({ setIsOpen, updateTable }) => {
             emailError: !isEmailValid,
             passwordError: !isPasswordValid,
             confirmPasswordError: !isConfirmPasswordValid,
+            profileError: !isProfileValid,
         }
         setForm(updatedForm)
 
-        if (isNameValid && isLastNameValid && isGenderValid && isEmailValid && isProfileValid && isPasswordValid && isConfirmPasswordValid) {
+        if (isNameValid && isLastNameValid && location.pathname === '/auth/register' ? isGenderValid : true && isEmailValid && isPasswordValid && isConfirmPasswordValid) {
             const body = {
+                id: 0,
                 name: form.name,
                 last_name: form.lastName,
                 email: form.email,
                 password: form.password,
-                id_profile: form.profile
+                id_profile: form.profile,
+                status: 1,
             }
-            console.log(body)
-            // try {
-            //     const data = await BD_ACTION_POST('create_user', body)
-            //     console.log(data)
+            try {
+                const data = await BD_ACTION_POST('create_user', body)
 
-            //     if (!data.error) {
-            //         Swal.fire(
-            //             "Registed!",
-            //             'Your account has been created!',
-            //             'success'
-            //         )
-            //         if (location.pathname === '/auth/sign_up') {
-            //             navigate('/auth')
-            //         } else {
-            //             setIsOpen(false)
-            //             updateTable()
-            //         }
-            //     } else {
-            //         Swal.fire({
-            //             icon: 'error',
-            //             title: 'Oops...',
-            //             text: 'An error occurred, please try again later!',
-            //         })
-            //     }
-            // } catch (error) {
-            //     console.error(error);
-            //     Swal.fire({
-            //         icon: 'error',
-            //         title: 'Oops...',
-            //         text: 'An error occurred while creating the user!',
-            //     })
-            // }
+                if (!data.error) {
+                    Swal.fire(
+                        "Registed!",
+                        'Your account has been created!',
+                        'success'
+                    )
+                    if (location.pathname === '/auth/register') {
+                        navigate('/auth')
+                    } else {
+                        setIsOpen(false)
+                        updateTable()
+                    }
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'An error occurred, please try again later!',
+                    })
+                }
+            } catch (error) {
+                console.error(error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'An error occurred while creating the user!',
+                })
+            }
         } else {
             Swal.fire({
                 icon: 'error',
@@ -113,8 +115,8 @@ export const RegisterForm = ({ setIsOpen, updateTable }) => {
     }
     return (
         <>
-            <div className='flex lg:flex-row md:flex-row sm:flex-col flex-col items-center justify-around mt-16 gap-5 lg:mx-28 md:mx-7 mx-5'>
-                <div className='flex flex-col lg:w-w-1/2 md:w-1/2 sm:full w-full'>
+            <div className='flex lg:flex-row md:flex-row sm:flex-col flex-col items-center justify-around mt-16 gap-5 lg:mx-28 md:mx-7 mx-5 w-full'>
+                <div className='flex flex-col lg:w-w-1/2 md:w-1/2 sm:full'>
                     <h1 className='text-2xl font-bold mb-3'>Personal Information</h1>
                     {/* Name Input */}
                     <label className='mt-4'>Name *</label>
@@ -124,14 +126,26 @@ export const RegisterForm = ({ setIsOpen, updateTable }) => {
                     <label className='mt-4'>Last Name *</label>
                     <input className='bg-gray-200 rounded-3xl px-4 mt-1 h-10' type="text" placeholder='Your last name' onChange={(e) => setForm({ ...form, lastName: e.target.value })} />
                     <span className='text-sm text-red-600 italic'>{form.lastNameError ? "Invalid name" : ""}</span>
-                    {/* Gender Select */}
-                    <label className='mt-4'>Gender *</label>
-                    <select id="profile" className='bg-gray-200 rounded-3xl px-2 mt-1 h-10' value={form.gender} onChange={(e) => setForm({ ...form, gender: e.target.value })}>
-                        <option value="">Select Gender</option>
-                        <option value="1">Male</option>
-                        <option value="2">Female</option>
-                    </select>
-                    <span className='text-sm text-red-600 italic'>{form.genderError ? "Select a gender" : ""}</span>
+                    {(location.pathname === '/auth/register') ? (<>
+                        {/* Gender Select */}
+                        <label className='mt-4'>Gender *</label>
+                        <select id="profile" className='bg-gray-200 rounded-3xl px-2 mt-1 h-10' value={form.gender} onChange={(e) => setForm({ ...form, gender: e.target.value })}>
+                            <option value="">Select Gender</option>
+                            <option value="1">Male</option>
+                            <option value="2">Female</option>
+                        </select>
+                        <span className='text-sm text-red-600 italic'>{form.genderError ? "Select a gender" : ""}</span>
+                    </>) : (<>
+                        {/* Profile Select */}
+                        <label className='mt-4'>Profile *</label>
+                        <select id="profile" className='bg-gray-200 rounded-3xl px-2 mt-1 h-10' value={form.profile} onChange={(e) => setForm({ ...form, profile: e.target.value })}>
+                            <option value="">Select Profile</option>
+                            <option value="1">Admin</option>
+                            <option value="2">User</option>
+                        </select>
+                        <span className='text-sm text-red-600 italic'>{form.profileError ? "Select a profile" : ""}</span>
+                    </>)}
+
                 </div>
                 {/* Account Information */}
                 <div className='flex flex-col lg:w-w-1/2 md:w-1/2 sm:full w-full'>

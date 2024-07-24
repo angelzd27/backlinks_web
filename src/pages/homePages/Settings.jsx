@@ -1,19 +1,85 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { IoIosArrowBack } from 'react-icons/io'
-import { decodedJWT } from '../../services/jwt'
+import { decodedJWT, getJWT } from '../../services/jwt'
+import { BD_ACTION_GET } from '../../services/request'
+import { EmailModal } from '../../components/CreateModal'
 
 const Settings = () => {
     const jwt = decodedJWT()
+    const user = jwt.user_id
+    const [rerender, setRerender] = useState(false);
+    const [emails, setEmails] = useState([])
 
     const [form, setForm] = useState({
-        name: jwt.name,
+        name: user.name,
         nameError: false,
-        lastName: jwt.last_name,
+        lastName: user.last_name,
         lastNameError: false,
-        email: jwt.email,
+        email: user.email,
         emailError: false,
     })
+
+    const [formConfig, setFormConfig] = useState({
+        id: "",
+        pages_number: "",
+        contact_number: "",
+        author: "",
+        config_email: "",
+        url: "",
+        comment: "",
+        subject: "",
+        message: "",
+        related_emails: ""
+    })
+
+    const update = () => {
+        setRerender(prev => !prev);
+      }
+
+    const getConfig = async () => {
+        const data = await BD_ACTION_GET(`get_config/${user.id_profile}`, null, getJWT())
+
+        const updatedForm = {
+            ...formConfig,
+            id: data.msg[0].id,
+            pages_number: data.msg[0].pages_number,
+            contact_number: data.msg[0].contact_number,
+            author: data.msg[0].author,
+            config_email: data.msg[0].config_email,
+            url: data.msg[0].url,
+            comment: data.msg[0].comment,
+            subject: data.msg[0].subject,
+            message: data.msg[0].message,
+            related_emails: data.msg[0].related_emails
+        }
+        setFormConfig(updatedForm)
+        setEmails(JSON.parse(data.msg[0].related_emails))
+    }
+
+    useEffect(() => {
+        getConfig()
+    }, [rerender])
+
+    const EmailContainer = ({ email, password, setFormConfig }) => {
+        return (
+            <div className='flex flex-row items-center justify-around mt-5 mb-5'>
+                <div className='flex flex-row w-full gap-7'>
+                    <div className='w-1/2'>
+                        <p className='mt-4'>Email *</p>
+                        <input className='bg-gray-200 rounded-3xl px-4 mt-1 h-10 w-full' type="text" value={email || ""} placeholder='someemail@mail.com' onChange={(e) => setFormConfig({ ...form, email: e.target.value })} />
+                        <span className='text-sm text-red-600 italic'>{form.nameError ? "Invalid name" : ""}</span>
+                    </div>
+                    <div className='w-1/2'>
+
+                        <p className='mt-4'>Password *</p>
+                        <input className='bg-gray-200 rounded-3xl px-4 mt-1 h-10 w-full' type="text" value={password || ""} placeholder='**********' onChange={(e) => setFormConfig({ ...form, password: e.target.value })} />
+                        <span className='text-sm text-red-600 italic'>{form.lastNameError ? "Invalid last name" : ""}</span>
+                    </div>
+                </div>
+            </div>
+        )
+    }
 
     return (
         <div className='bg-okip-100 dark:bg-okip-700 lg:px-10 md:px-8 sm:px-6 px-5 pt-10 pb-32'>
@@ -63,13 +129,13 @@ const Settings = () => {
                             <div className='w-1/2'>
 
                                 <p className='mt-4'>Nomber of pages *</p>
-                                <input className='bg-gray-200 rounded-3xl px-4 mt-1 h-10 w-full' type="text" value={form.name || ""} placeholder='Write the number of pages to search' onChange={(e) => setForm({ ...form, name: e.target.value })} />
+                                <input className='bg-gray-200 rounded-3xl px-4 mt-1 h-10 w-full' type="text" value={formConfig.pages_number || ""} placeholder='Write the number of pages to search' onChange={(e) => setForm({ ...formConfig, pages_number: e.target.value })} />
                                 <span className='text-sm text-red-600 italic'>{form.nameError ? "Invalid name" : ""}</span>
                             </div>
                             <div className='w-1/2'>
 
                                 <p className='mt-4'>Number of contacts *</p>
-                                <input className='bg-gray-200 rounded-3xl px-4 mt-1 h-10 w-full' type="text" value={form.lastName || ""} placeholder='Write the number of contacts to search' onChange={(e) => setForm({ ...form, lastName: e.target.value })} />
+                                <input className='bg-gray-200 rounded-3xl px-4 mt-1 h-10 w-full' type="text" value={formConfig.contact_number || ""} placeholder='Write the number of contacts to search' onChange={(e) => setForm({ ...formConfig, contact_number: e.target.value })} />
                                 <span className='text-sm text-red-600 italic'>{form.lastNameError ? "Invalid last name" : ""}</span>
                             </div>
                         </div>
@@ -85,19 +151,19 @@ const Settings = () => {
                 <div className='w-1/2'>
 
                     <p className='mt-4'>Author *</p>
-                    <input className='bg-gray-200 rounded-3xl px-4 mt-1 h-10 w-full' type="text" value={form.name || ""} placeholder='Author of the comment' onChange={(e) => setForm({ ...form, name: e.target.value })} />
+                    <input className='bg-gray-200 rounded-3xl px-4 mt-1 h-10 w-full' type="text" value={formConfig.author || ""} placeholder='Author of the comment' onChange={(e) => setForm({ ...formConfig, author: e.target.value })} />
                     <span className='text-sm text-red-600 italic'>{form.nameError ? "Invalid name" : ""}</span>
 
                     <p className='mt-4'>Email *</p>
-                    <input className='bg-gray-200 rounded-3xl px-4 mt-1 h-10 w-full' type="text" value={form.name || ""} placeholder='Email to sent in comment' onChange={(e) => setForm({ ...form, name: e.target.value })} />
+                    <input className='bg-gray-200 rounded-3xl px-4 mt-1 h-10 w-full' type="text" value={formConfig.config_email || ""} placeholder='Email to sent in comment' onChange={(e) => setForm({ ...formConfig, config_email: e.target.value })} />
                     <span className='text-sm text-red-600 italic'>{form.nameError ? "Invalid name" : ""}</span>
 
                     <p className='mt-4'>Url *</p>
-                    <input className='bg-gray-200 rounded-3xl px-4 mt-1 h-10 w-full' type="text" value={form.name || ""} placeholder='Url to send in comment' onChange={(e) => setForm({ ...form, name: e.target.value })} />
+                    <input className='bg-gray-200 rounded-3xl px-4 mt-1 h-10 w-full' type="text" value={formConfig.url || ""} placeholder='Url to send in comment' onChange={(e) => setForm({ ...formConfig, url: e.target.value })} />
                     <span className='text-sm text-red-600 italic'>{form.nameError ? "Invalid name" : ""}</span>
 
                     <p className='mt-4'>Comment *</p>
-                    <textarea className='bg-gray-200 rounded-3xl px-4 py-2 mt-1 h-32 w-full' type="text" value={form.name || ""} placeholder='Write the comment that you want to send' onChange={(e) => setForm({ ...form, name: e.target.value })} />
+                    <textarea className='bg-gray-200 rounded-3xl px-4 py-2 mt-1 h-32 w-full' type="text" value={formConfig.comment || ""} placeholder='Write the comment that you want to send' onChange={(e) => setForm({ ...formConfig, comment: e.target.value })} />
                     <span className='text-sm text-red-600 italic'>{form.nameError ? "Invalid name" : ""}</span>
                 </div>
             </div>
@@ -110,11 +176,11 @@ const Settings = () => {
                 <div className='w-1/2'>
 
                     <p className='mt-4'>Subject *</p>
-                    <input className='bg-gray-200 rounded-3xl px-4 mt-1 h-10 w-full' type="text" value={form.name || ""} placeholder='Email subject' onChange={(e) => setForm({ ...form, name: e.target.value })} />
+                    <input className='bg-gray-200 rounded-3xl px-4 mt-1 h-10 w-full' type="text" value={formConfig.subject || ""} placeholder='Email subject' onChange={(e) => setForm({ ...formConfig, subject: e.target.value })} />
                     <span className='text-sm text-red-600 italic'>{form.nameError ? "Invalid name" : ""}</span>
 
                     <p className='mt-4'>Message *</p>
-                    <input className='bg-gray-200 rounded-3xl px-4 mt-1 h-10 w-full' type="text" value={form.name || ""} placeholder='Email body' onChange={(e) => setForm({ ...form, name: e.target.value })} />
+                    <input className='bg-gray-200 rounded-3xl px-4 mt-1 h-10 w-full' type="text" value={formConfig.message || ""} placeholder='Email body' onChange={(e) => setForm({ ...formConfig, message: e.target.value })} />
                     <span className='text-sm text-red-600 italic'>{form.nameError ? "Invalid name" : ""}</span>
                 </div>
             </div>
@@ -125,56 +191,11 @@ const Settings = () => {
                     <p>Change the credentials of your accounts</p>
                 </div>
                 <div className='w-1/2'>
-
-                    <div className='flex flex-row items-center justify-around mt-5 mb-5'>
-                        <div className='flex flex-row w-full gap-7'>
-                            <div className='w-1/2'>
-                                <p className='mt-4'>Email *</p>
-                                <input className='bg-gray-200 rounded-3xl px-4 mt-1 h-10 w-full' type="text" value={form.name || ""} placeholder='someemail@mail.com' onChange={(e) => setForm({ ...form, name: e.target.value })} />
-                                <span className='text-sm text-red-600 italic'>{form.nameError ? "Invalid name" : ""}</span>
-                            </div>
-                            <div className='w-1/2'>
-
-                                <p className='mt-4'>Password *</p>
-                                <input className='bg-gray-200 rounded-3xl px-4 mt-1 h-10 w-full' type="text" value={form.lastName || ""} placeholder='**********' onChange={(e) => setForm({ ...form, lastName: e.target.value })} />
-                                <span className='text-sm text-red-600 italic'>{form.lastNameError ? "Invalid last name" : ""}</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className='flex flex-row items-center justify-around mt-5 mb-5'>
-                        <div className='flex flex-row w-full gap-7'>
-                            <div className='w-1/2'>
-                                <p className='mt-4'>Email *</p>
-                                <input className='bg-gray-200 rounded-3xl px-4 mt-1 h-10 w-full' type="text" value={form.name || ""} placeholder='someemail@mail.com' onChange={(e) => setForm({ ...form, name: e.target.value })} />
-                                <span className='text-sm text-red-600 italic'>{form.nameError ? "Invalid name" : ""}</span>
-                            </div>
-                            <div className='w-1/2'>
-
-                                <p className='mt-4'>Password *</p>
-                                <input className='bg-gray-200 rounded-3xl px-4 mt-1 h-10 w-full' type="text" value={form.lastName || ""} placeholder='**********' onChange={(e) => setForm({ ...form, lastName: e.target.value })} />
-                                <span className='text-sm text-red-600 italic'>{form.lastNameError ? "Invalid last name" : ""}</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className='flex flex-row items-center justify-around mt-5 mb-5'>
-                        <div className='flex flex-row w-full gap-7'>
-                            <div className='w-1/2'>
-                                <p className='mt-4'>Email *</p>
-                                <input className='bg-gray-200 rounded-3xl px-4 mt-1 h-10 w-full' type="text" value={form.name || ""} placeholder='someemail@mail.com' onChange={(e) => setForm({ ...form, name: e.target.value })} />
-                                <span className='text-sm text-red-600 italic'>{form.nameError ? "Invalid name" : ""}</span>
-                            </div>
-                            <div className='w-1/2'>
-
-                                <p className='mt-4'>Password *</p>
-                                <input className='bg-gray-200 rounded-3xl px-4 mt-1 h-10 w-full' type="text" value={form.lastName || ""} placeholder='**********' onChange={(e) => setForm({ ...form, lastName: e.target.value })} />
-                                <span className='text-sm text-red-600 italic'>{form.lastNameError ? "Invalid last name" : ""}</span>
-                            </div>
-                        </div>
-                    </div>
+                    {emails.map((email) => (
+                        <EmailContainer key={email.id} email={email.email} password={email.password} />
+                    ))}
                     <div className='w-full flex justify-end'>
-                        <button className='px-4 py-2 bg-blue-500 text-white rounded-3xl mt-5'>Add other email</button>
+                        <EmailModal id={formConfig.id} text="Add other email" update={update} />
                     </div>
                 </div>
             </div>

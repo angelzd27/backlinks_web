@@ -14,7 +14,6 @@ const Users = () => {
 
   const getUsers = async () => {
     const data = await BD_ACTION_GET("get_users", null, getJWT())
-    console.log(data)
     setUsers(data.msg)
     setOriginalUsers(data.msg)
   }
@@ -52,7 +51,6 @@ const Users = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         const data = await BD_ACTION_DELETE('delete_user', id, getJWT())
-        console.log(data)
         if (data.error) {
           Swal.fire({
             icon: "error",

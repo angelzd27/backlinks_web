@@ -13,7 +13,6 @@ const Websites = () => {
 
   const getWebsites = async () => {
     const data = await BD_ACTION_GET("get_websites", null, getJWT())
-    console.log(data)
     setWebsites(data.msg)
     setOriginalWebsites(data.msg)
   }
@@ -50,7 +49,6 @@ const Websites = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         const data = await BD_ACTION_DELETE('delete_website', id, getJWT())
-        console.log(data)
         if (data.error) {
           Swal.fire({
             icon: "error",
