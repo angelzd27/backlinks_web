@@ -72,6 +72,12 @@ const Login = () => {
                 </div>
 
                 <button className='bg-blue-600 hover:shadow-2xl p-2 px-10 rounded-3xl my-5 font-bold text-white' onClick={sign_in}>Login</button>
+                <div className='flex flex-row'>
+                    <h3 className='sm:text-base text-sm'>Dont have an account?</h3>
+                    <Link className='font-bold sm:text-base text-sm ml-2 hover:cursor-pointer' to='/auth/register'>
+                        Sign Up
+                    </Link>
+                </div>
             </div>
         </>
     )

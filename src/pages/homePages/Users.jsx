@@ -3,6 +3,7 @@ import { BD_ACTION_DELETE, BD_ACTION_GET } from '../../services/request';
 import { DataTable } from '../../components/Tables';
 import { getJWT } from '../../services/jwt';
 import Swal from 'sweetalert2';
+import { CreateModal } from '../../components/CreateModal';
 
 const Users = () => {
   const [users, setUsers] = useState([])
@@ -86,9 +87,9 @@ const Users = () => {
               filterUsers();
             }
           }} />
-          {/* <CreateModal text="New User" updateTable={updateTable} /> */}
+          <CreateModal text="New User" updateTable={updateTable} />
         </div>
-        <div className="w-full overflow-x-scroll mt-10">
+        <div className="w-full mt-10">
           <DataTable thead={thead} tbody={users} _delete={_delete} updateTable={updateTable} text="Update User" />
         </div>
       </section>

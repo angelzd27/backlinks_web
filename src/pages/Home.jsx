@@ -13,7 +13,7 @@ const Home = () => {
     return (
       <>
         {
-          expiredJWT() ? (<Navigate to="/auth/sign_in" />) : (
+          expiredJWT() ? (<Navigate to="/auth/login" />) : (
             <div>
               <div className='flex min-h-screen bg-slate-50'>
                 <Sidebar />
