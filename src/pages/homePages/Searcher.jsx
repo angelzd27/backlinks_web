@@ -5,7 +5,6 @@ import { getJWT } from '../../services/jwt';
 
 const Searcher = () => {
   const [keyword, setKeyword] = useState("");
-  const [data, setData] = useState(null);
   const [makeComments, setMakeComments] = useState(false);
   const [makeContacts, setMakeContacts] = useState(false);
 
@@ -20,14 +19,14 @@ const Searcher = () => {
           url: "https://okip.com.mx",
           comment: "Hola, me gustaría saber mas informacion.",
         }
-        setData(await BD_ACTION_POST("create_comment", body, getJWT()))
+        const data = await BD_ACTION_POST("create_comment", body, getJWT())
         console.log(data);
       } else if (makeContacts) {
         const body = {
           keyword,
           number_of_pages: 10,
         }
-        setData(await BD_ACTION_POST("search_contact", body, getJWT()))
+        const data = await BD_ACTION_POST("search_contact", body, getJWT())
         console.log(data);
       } else {
         alert("Please select an option to search");

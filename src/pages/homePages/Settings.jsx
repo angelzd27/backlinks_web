@@ -67,13 +67,13 @@ const Settings = () => {
                 <div className='flex flex-row w-full gap-7'>
                     <div className='w-1/2'>
                         <p className='mt-4'>Email *</p>
-                        <input className='bg-gray-200 rounded-3xl px-4 mt-1 h-10 w-full' type="text" value={email || ""} placeholder='someemail@mail.com' onChange={(e) => setFormConfig({ ...form, email: e.target.value })} />
+                        <input className='bg-gray-200 rounded-3xl px-4 mt-1 h-10 w-full' type="email" value={email || ""} placeholder='someemail@mail.com' onChange={(e) => setFormConfig({ ...form, email: e.target.value })} />
                         <span className='text-sm text-red-600 italic'>{form.nameError ? "Invalid name" : ""}</span>
                     </div>
                     <div className='w-1/2'>
 
                         <p className='mt-4'>Password *</p>
-                        <input className='bg-gray-200 rounded-3xl px-4 mt-1 h-10 w-full' type="text" value={password || ""} placeholder='**********' onChange={(e) => setFormConfig({ ...form, password: e.target.value })} />
+                        <input className='bg-gray-200 rounded-3xl px-4 mt-1 h-10 w-full' type="password" value={password || ""} placeholder='**********' onChange={(e) => setFormConfig({ ...form, password: e.target.value })} />
                         <span className='text-sm text-red-600 italic'>{form.lastNameError ? "Invalid last name" : ""}</span>
                     </div>
                 </div>

@@ -95,11 +95,11 @@ export const EmailModal = ({ id, text, update }) => {
                             <div className='flex flex-row w-full gap-7'>
                                 <div className='w-1/2'>
                                     <p className='mt-4'>Email *</p>
-                                    <input className='bg-gray-200 rounded-3xl px-4 mt-1 h-10 w-full' type="text" placeholder='someemail@mail.com' onChange={(e) => setEmail(e.target.value)} />
+                                    <input className='bg-gray-200 rounded-3xl px-4 mt-1 h-10 w-full' type="text" placeholder='Write an email' onChange={(e) => setEmail(e.target.value)} />
                                 </div>
                                 <div className='w-1/2'>
                                     <p className='mt-4'>Password *</p>
-                                    <input className='bg-gray-200 rounded-3xl px-4 mt-1 h-10 w-full' type="text" placeholder='**********' onChange={(e) => setPassword(e.target.value)} />
+                                    <input className='bg-gray-200 rounded-3xl px-4 mt-1 h-10 w-full' type="text" placeholder='Write your app password' onChange={(e) => setPassword(e.target.value)} />
                                 </div>
                             </div>
                         </div>
