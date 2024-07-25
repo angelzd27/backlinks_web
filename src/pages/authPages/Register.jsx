@@ -116,7 +116,7 @@ export const RegisterForm = ({ setIsOpen, updateTable }) => {
     return (
         <>
             <div className='flex lg:flex-row md:flex-row sm:flex-col flex-col items-center justify-around mt-16 gap-5 lg:mx-28 md:mx-7 mx-5 w-full'>
-                <div className='flex flex-col lg:w-w-1/2 md:w-1/2 sm:full'>
+                <div className='flex flex-col lg:w-w-1/2 md:w-1/2 sm:w-full w-full px-10'>
                     <h1 className='text-2xl font-bold mb-3'>Personal Information</h1>
                     {/* Name Input */}
                     <label className='mt-4'>Name *</label>
@@ -148,7 +148,7 @@ export const RegisterForm = ({ setIsOpen, updateTable }) => {
 
                 </div>
                 {/* Account Information */}
-                <div className='flex flex-col lg:w-w-1/2 md:w-1/2 sm:full w-full'>
+                <div className='flex flex-col lg:w-w-1/2 md:w-1/2 sm:w-full w-full px-10'>
                     <h1 className='text-2xl font-bold mb-3'>Account Information</h1>
                     {/* Email Input */}
                     <label className='mt-4'>Email *</label>

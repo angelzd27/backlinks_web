@@ -4,6 +4,7 @@ import { IoIosArrowBack } from 'react-icons/io'
 import { decodedJWT, getJWT } from '../../services/jwt'
 import { BD_ACTION_GET } from '../../services/request'
 import { EmailModal } from '../../components/CreateModal'
+import { FiSave } from "react-icons/fi";
 
 const Settings = () => {
     const jwt = decodedJWT()
@@ -35,7 +36,7 @@ const Settings = () => {
 
     const update = () => {
         setRerender(prev => !prev);
-      }
+    }
 
     const getConfig = async () => {
         const data = await BD_ACTION_GET(`get_config/${user.id_profile}`, null, getJWT())
@@ -83,13 +84,14 @@ const Settings = () => {
 
     return (
         <div className='bg-okip-100 dark:bg-okip-700 lg:px-10 md:px-8 sm:px-6 px-5 pt-10 pb-32'>
-            <div className='w-full flex'>
+            <div className='w-full flex justify-between'>
                 <Link to="/" className='flex items-center justify-center mb-10'>
                     <button className='bg-zinc-400 p-4 rounded-full lg:h-16 md:h-14 h-12 lg:w-16 md:w-14 w-12 lg:text-3xl md:text-2xl text-xl flex items-center justify-center mr-8 text-white'>
                         <IoIosArrowBack />
                     </button>
                     <span className='lg:text-5xl md:text-4xl text-3xl font-bold text-center'>Settings</span>
                 </Link>
+                <button className='px-10 h-12 text-white text-2xl rounded-3xl bg-blue-600 font-bold'><FiSave /></button>
             </div>
             <span className='text-2xl text-center ml-24'>Settings and options for your application.</span>
 

@@ -58,7 +58,12 @@ export const BD_ACTION_UPDATE_PARTIAL = async (model, params, body, token) => {
 }
 
 export const BD_ACTION_DELETE = async (model, params, token) => {
-  const url = `${url_services}/${model}/${params}`
+  let url = ''
+  if (params == null) {
+    url = `${url_services}/${model}`
+  } else {
+    url = `${url_services}/${model}/${params}`
+  }
   const data = await axios.delete(url, config(token))
 
   return data.data

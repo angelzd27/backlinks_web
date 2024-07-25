@@ -1,35 +1,92 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { HiMiniMagnifyingGlass } from "react-icons/hi2";
-import { BD_ACTION_POST } from '../../services/request';
+import { BD_ACTION_GET, BD_ACTION_POST } from '../../services/request';
 import { getJWT } from '../../services/jwt';
+import { decodedJWT } from '../../services/jwt';
+import Loader from '../../components/Loader';
+import Swal from 'sweetalert2';
 
 const Searcher = () => {
   const [keyword, setKeyword] = useState("");
   const [makeComments, setMakeComments] = useState(false);
   const [makeContacts, setMakeContacts] = useState(false);
+  const [load, setLoad] = useState(false)
+  const jwt = decodedJWT()
+  const user = jwt.user_id
+
+  const [formConfig, setFormConfig] = useState({
+    id: "",
+    pages_number: "",
+    contact_number: "",
+    author: "",
+    config_email: "",
+    url: "",
+    comment: "",
+    subject: "",
+    message: "",
+    related_emails: ""
+  })
+
+  const getConfig = async () => {
+    const data = await BD_ACTION_GET(`get_config/${user.id_profile}`, null, getJWT())
+
+    const updatedForm = {
+      ...formConfig,
+      id: data.msg[0].id,
+      pages_number: data.msg[0].pages_number,
+      contact_number: data.msg[0].contact_number,
+      author: data.msg[0].author,
+      config_email: data.msg[0].config_email,
+      url: data.msg[0].url,
+      comment: data.msg[0].comment,
+      subject: data.msg[0].subject,
+      message: data.msg[0].message,
+      related_emails: data.msg[0].related_emails
+    }
+    setFormConfig(updatedForm)
+  }
+
+  useEffect(() => {
+    getConfig()
+  }, [])
 
   const handleKeyDown = async (e) => {
+    
     if (e.key === 'Enter') {
+      setLoad(true)
       if (makeComments) {
         const body = {
           keyword,
-          number_of_pages: 40,
-          author: "Okip",
-          email: "comunicacion@okip.com.mx",
-          url: "https://okip.com.mx",
-          comment: "Hola, me gustaría saber mas informacion.",
+          number_of_pages: formConfig.pages_number,
+          author: formConfig.author,
+          email: formConfig.config_email,
+          url: formConfig.url,
+          comment: formConfig.comment,
         }
         const data = await BD_ACTION_POST("create_comment", body, getJWT())
         console.log(data);
+        setLoad(false)
+        Swal.fire(
+          "Commented!",
+          'Contacts have been commented on the pages!',
+          'success'
+      )
       } else if (makeContacts) {
         const body = {
           keyword,
-          number_of_pages: 10,
+          number_of_pages: formConfig.contact_number,
         }
         const data = await BD_ACTION_POST("search_contact", body, getJWT())
         console.log(data);
+        setLoad(false)
+        Swal.fire(
+          "Completed!",
+          'The new contacts have been added to the database!',
+          'success'
+      )
       } else {
         alert("Please select an option to search");
+        setLoad(false)
       }
     }
   };
@@ -59,6 +116,8 @@ const Searcher = () => {
   };
 
   return (
+    <>
+    <Loader load={load} /> 
     <div className='flex flex-col justify-center items-center h-screen -mt-16'>
       <h2 className='text-8xl font-extrabold'>Welcome</h2>
       <div className="relative text-xl mt-24">
@@ -88,6 +147,7 @@ const Searcher = () => {
         />
       </div>
     </div>
+    </>
   );
 }
 

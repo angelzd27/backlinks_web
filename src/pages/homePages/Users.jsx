@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { BD_ACTION_DELETE, BD_ACTION_GET } from '../../services/request';
 import { DataTable } from '../../components/Tables';
-import { getJWT } from '../../services/jwt';
+import { decodedJWT, getJWT } from '../../services/jwt';
 import Swal from 'sweetalert2';
 import { CreateModal } from '../../components/CreateModal';
 
@@ -11,6 +11,8 @@ const Users = () => {
   const [rerender, setRerender] = useState(false);
   const thead = ["id", "name", "last_name", "email"]
   const [searchText, setSearchText] = useState("")
+  const jwt = decodedJWT()
+  const user = jwt.user_id
 
   const getUsers = async () => {
     const data = await BD_ACTION_GET("get_users", null, getJWT())
@@ -85,7 +87,7 @@ const Users = () => {
               filterUsers();
             }
           }} />
-          <CreateModal text="New User" updateTable={updateTable} />
+          {user.id_profile == 1 && (<CreateModal text="New User" updateTable={updateTable} />)}
         </div>
         <div className="w-full mt-10">
           <DataTable thead={thead} tbody={users} _delete={_delete} updateTable={updateTable} text="Update User" />

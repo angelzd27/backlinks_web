@@ -58,10 +58,40 @@ const Websites = () => {
         } else {
           Swal.fire({
             title: "Deleted!",
-            text: `Website ${id} has been deleted.`,
+            text: `Website with the id ${id} deleted`,
             icon: "success"
           })
-          getUsers()
+          getWebsites()
+        }
+      }
+    })
+  }
+
+  const _deleteAll = () => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#1F9C19",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const data = await BD_ACTION_DELETE('delete_websites', null, getJWT())
+        if (data.error) {
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Server error try again!",
+          })
+        } else {
+          Swal.fire({
+            title: "Deleted!",
+            text: `All websited deleted`,
+            icon: "success"
+          })
+          getWebsites()
         }
       }
     })
@@ -87,6 +117,8 @@ const Websites = () => {
         <div className="w-full mt-10">
           <DataTable thead={thead} tbody={websites} _delete={_delete} updateTable={updateTable} text="Update Website" />
         </div>
+
+        <button className='bg-red-500 text-white px-10 py-2 font-bold rounded-3xl' onClick={_deleteAll}>Delete websites</button>
       </section>
     </>
   )
