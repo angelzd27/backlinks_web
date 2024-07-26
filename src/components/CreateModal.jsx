@@ -43,11 +43,20 @@ export const EmailModal = ({ id, text, update }) => {
     const [password, setPassword] = useState('')
 
     const sendEmail = async () => {
+        if(email === '' || password === ''){
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Please fill all the fields!',
+            })
+            return
+        }
         const body = {
             id: id,
             email: email,
             password: password,
         }
+        console.log(body);
         try {
             const data = await BD_ACTION_POST('create_email_config', body)
             if (!data.error) {
@@ -91,7 +100,7 @@ export const EmailModal = ({ id, text, update }) => {
                         <h2 className='w-full text-left text-2xl mb-5'>How to add a new email:</h2>
                         <iframe width="560" height="315" src="https://www.youtube.com/embed/u3YIHs1Rx78?si=ErdAgBOOzKwA_Bsy" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
                         <h2 className='mt-10 w-full text-left text-2xl font-bold'>Write tour credentials</h2>
-                        <div className='flex flex-row mt-5 mb-5'>
+                        <div className='flex flex-col mt-5 mb-5 w-full'>
                             <div className='flex flex-row w-full gap-7'>
                                 <div className='w-1/2'>
                                     <p className='mt-4'>Email *</p>
@@ -103,7 +112,7 @@ export const EmailModal = ({ id, text, update }) => {
                                 </div>
                             </div>
                         </div>
-                        <button className='bg-blue-600 px-10 py-2 text-white rounded-3xl font-bold' onClick={() => {
+                        <button className='bg-blue-600 px-16 py-2 text-white rounded-3xl font-bold' onClick={() => {
                             sendEmail()
                         }}>Submit</button>
                     </div>

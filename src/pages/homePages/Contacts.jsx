@@ -178,8 +178,8 @@ const Contacts = () => {
         </div>
 
         <div className='flex gap-5'>
-          <button className='bg-blue-500 text-white px-10 py-2 font-bold rounded-3xl' onClick={sendEmails}>Send emails to contacts</button>
-          <button className='bg-red-500 text-white px-10 py-2 font-bold rounded-3xl' onClick={_deleteAll}>Delete contacts</button>
+          <button className='bg-blue-500 hover:bg-blue-700 text-white px-10 py-2 font-bold rounded-3xl' onClick={sendEmails}>Send emails to contacts</button>
+          <button className='bg-red-500 hover:bg-red-700 text-white px-10 py-2 font-bold rounded-3xl' onClick={_deleteAll}>Delete contacts</button>
         </div>
       </section>
     </>

@@ -118,7 +118,7 @@ const Websites = () => {
           <DataTable thead={thead} tbody={websites} _delete={_delete} updateTable={updateTable} text="Update Website" />
         </div>
 
-        <button className='bg-red-500 text-white px-10 py-2 font-bold rounded-3xl' onClick={_deleteAll}>Delete websites</button>
+        <button className='bg-red-500 hover:bg-red-700 text-white px-10 py-2 font-bold rounded-3xl' onClick={_deleteAll}>Delete websites</button>
       </section>
     </>
   )

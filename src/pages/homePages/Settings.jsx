@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { IoIosArrowBack } from 'react-icons/io'
 import { decodedJWT, getJWT } from '../../services/jwt'
-import { BD_ACTION_GET } from '../../services/request'
+import { BD_ACTION_GET, BD_ACTION_POST } from '../../services/request'
 import { EmailModal } from '../../components/CreateModal'
 import { FiSave } from "react-icons/fi";
+import { validateEmail } from '../../utils/validators'
 
 const Settings = () => {
     const jwt = decodedJWT()
@@ -62,21 +63,82 @@ const Settings = () => {
         getConfig()
     }, [rerender])
 
-    const EmailContainer = ({ email, password, setFormConfig }) => {
+    const EmailContainer = ({ id, email, password, updateData }) => {
+        const [form, setForm] = useState({
+            email: email,
+            emailError: false,
+            password: password,
+            passwordError: false,
+        })
+
+        const editEmail = async () => {
+            const isEmailValid = validateEmail(form.email)
+            const isPasswordValid = form.password.length > 0
+
+            const updatedForm = {
+                ...form,
+                emailError: !isEmailValid,
+                passwordError: !isPasswordValid,
+            }
+            setForm(updatedForm)
+
+            if (isEmailValid && isPasswordValid) {
+                const body = {
+                    id: id,
+                    email: form.email,
+                    password: form.password,
+                }
+                try {
+                    const data = await BD_ACTION_POST('edit_email', body, getJWT())
+                    console.log(data);
+
+                    if (!data.error) {
+                        Swal.fire(
+                            "Email edited!",
+                            'Your email has been edited!',
+                            'success'
+                        )
+                        updateData()
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'An error occurred, please try again later!',
+                        })
+                    }
+                } catch (error) {
+                    console.error(error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'An error occurred while editing the email!',
+                    })
+                }
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'An error occurred, check your information!',
+                })
+            }
+        }
+
         return (
             <div className='flex flex-row items-center justify-around mt-5 mb-5'>
                 <div className='flex flex-row w-full gap-7'>
                     <div className='w-1/2'>
                         <p className='mt-4'>Email *</p>
-                        <input className='bg-gray-200 rounded-3xl px-4 mt-1 h-10 w-full' type="email" value={email || ""} placeholder='someemail@mail.com' onChange={(e) => setFormConfig({ ...form, email: e.target.value })} />
-                        <span className='text-sm text-red-600 italic'>{form.nameError ? "Invalid name" : ""}</span>
+                        <input className='bg-gray-200 rounded-3xl px-4 mt-1 h-10 w-full' type="email" value={email || ""} placeholder='someemail@mail.com' onChange={(e) => setForm({ ...form, email: e.target.value })} />
+                        <span className='text-sm text-red-600 italic'>{form.emailError ? "Invalid email" : ""}</span>
                     </div>
                     <div className='w-1/2'>
 
                         <p className='mt-4'>Password *</p>
-                        <input className='bg-gray-200 rounded-3xl px-4 mt-1 h-10 w-full' type="password" value={password || ""} placeholder='**********' onChange={(e) => setFormConfig({ ...form, password: e.target.value })} />
-                        <span className='text-sm text-red-600 italic'>{form.lastNameError ? "Invalid last name" : ""}</span>
+                        <input className='bg-gray-200 rounded-3xl px-4 mt-1 h-10 w-full' type="password" value={password || ""} placeholder='**********' onChange={(e) => setForm({ ...form, password: e.target.value })} />
+                        <span className='text-sm text-red-600 italic'>{form.passwordError ? "Invalid password" : ""}</span>
                     </div>
+                    <button className="text-green-600 hover:text-green-700 hover:underline font-bold rounded-xl mt-7" onClick={editEmail}>Save</button>
+                    <button className="text-red-400 hover:text-red-500 hover:underline font-bold rounded-xl mt-7">Remove</button>
                 </div>
             </div>
         )
@@ -181,8 +243,8 @@ const Settings = () => {
                     <input className='bg-gray-200 rounded-3xl px-4 mt-1 h-10 w-full' type="text" value={formConfig.subject || ""} placeholder='Email subject' onChange={(e) => setForm({ ...formConfig, subject: e.target.value })} />
                     <span className='text-sm text-red-600 italic'>{form.nameError ? "Invalid name" : ""}</span>
 
-                    <p className='mt-4'>Message *</p>
-                    <input className='bg-gray-200 rounded-3xl px-4 mt-1 h-10 w-full' type="text" value={formConfig.message || ""} placeholder='Email body' onChange={(e) => setForm({ ...formConfig, message: e.target.value })} />
+                    <p className='mt-4'>Message Text/HTML *</p>
+                    <textarea className='bg-gray-200 rounded-3xl px-4 py-2 mt-1 h-96 w-full' type="text" value={formConfig.message || ""} placeholder='Email body' onChange={(e) => setForm({ ...formConfig, message: e.target.value })} />
                     <span className='text-sm text-red-600 italic'>{form.nameError ? "Invalid name" : ""}</span>
                 </div>
             </div>
@@ -194,10 +256,12 @@ const Settings = () => {
                 </div>
                 <div className='w-1/2'>
                     {emails.map((email) => (
-                        <EmailContainer key={email.id} email={email.email} password={email.password} />
+                        <>
+                            {(email.email != null & email.password != null) ? (<EmailContainer key={email.id} id={email.id} email={email.email} password={email.password} />) : (<p key={1} className='my-10 w-full text-right text-xl font-bold'>No Emails Assigned</p>)}
+                        </>
                     ))}
                     <div className='w-full flex justify-end'>
-                        <EmailModal id={formConfig.id} text="Add other email" update={update} />
+                        <EmailModal id={formConfig.id} text="Add Email" update={update} />
                     </div>
                 </div>
             </div>
