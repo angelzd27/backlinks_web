@@ -55,6 +55,7 @@ export const EmailModal = ({ id, text, update }) => {
             id: id,
             email: email,
             password: password,
+            status: 1
         }
         console.log(body);
         try {
