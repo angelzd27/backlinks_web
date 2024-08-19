@@ -119,7 +119,7 @@ const Searcher = () => {
     <>
     <Loader load={load} /> 
     <div className='flex flex-col justify-center items-center h-screen -mt-16'>
-      <h2 className='text-8xl font-extrabold'>Welcome</h2>
+      <h2 className='text-8xl font-bold'>BackLinker Pro</h2>
       <div className="relative text-xl mt-24">
         <input
           type="text"
